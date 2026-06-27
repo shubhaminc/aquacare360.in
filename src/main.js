@@ -348,7 +348,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
     menuLinks.forEach(function (link) {
       link.addEventListener("click", function (e) {
         var href = link.getAttribute("href");
-        if (href.startsWith("mailto:") || href.startsWith("http")) {
+        if (href && (href.startsWith("mailto:") || href.startsWith("http"))) {
           toggleMenu(false);
           return;
         }
@@ -360,15 +360,15 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         var targetEl = document.getElementById(targetId);
         if (targetEl) {
           setTimeout(function () {
-            var targetY = targetEl.getBoundingClientRect().top + window.pageYOffset;
-            window.scrollTo({
-              top: targetY,
-              behavior: "smooth"
+            targetEl.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
             });
-          }, 80);
+          }, 150);
         }
       });
     });
+
 
     window.addEventListener("resize", function () {
       if (window.innerWidth > 840 && isOpen) {
@@ -892,12 +892,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
             group.classList.remove("invalid");
           }
         }
-        
-        var targetY = contactSection.getBoundingClientRect().top + window.pageYOffset;
-        window.scrollTo({
-          top: targetY,
-          behavior: "smooth"
-        });
+
+        if (contactSection) {
+          contactSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
       });
     });
   })();
