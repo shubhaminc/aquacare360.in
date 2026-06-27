@@ -756,18 +756,24 @@
 
                         <input type="hidden" id="frmService" name="serviceType" value="" />
 
-                        <button type="submit" class="submit-btn">Request Proposal</button>
-                    </form>
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <span class="btn-text">Request Proposal</span>
+                            <span class="btn-loader" aria-hidden="true">
+                                <svg class="spinner-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle class="spinner-path" cx="12" cy="12" r="10" stroke-width="3"></circle>
+                                </svg>
+                            </span>
+                            <span class="btn-check" aria-hidden="true">
+                                <svg class="checkmark-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path class="checkmark-path" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                        </button>
 
-                    <div class="form-success-overlay" id="formSuccess" aria-hidden="true">
-                        <div class="success-box">
-                            <span class="success-icon">💧</span>
-                            <h3>Proposal Request Received!</h3>
-                            <p>Thank you. AquaCare360™'s engineering desk is reviewing your requirements. We will contact
-                                you within 24 hours to schedule the audit or share the proposal.</p>
-                            <button type="button" class="close-success-btn" id="closeSuccess">Done</button>
+                        <div class="form-success-message" id="formSuccessMessage" aria-hidden="true" style="display: none;">
+                            <p>Proposal Request Sent! We will contact you within 24 hours to schedule the audit. <a href="#" class="reset-form-link" id="resetFormLink">Send another request</a></p>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </section>
@@ -779,19 +785,32 @@
 
             <div class="f-grid">
                 <div class="f-col">
+                    <span>Office Address</span>
+                    <div class="f-sub-list">
+                        <span>A-703, Sankalp Square 3,<br>Sindhu Bhavan Road,<br>Besides Taj Skyline,<br>Ahmedabad, Gujarat,<br>India – 380059</span>
+                    </div>
+                </div>
+                <div class="f-col">
+                    <span>Contact Details</span>
+                    <div style="display: grid; gap: 4px; margin-bottom: 8px;">
+                        <span style="font-size: 10px; color: var(--saffron); opacity: 0.8; letter-spacing: 0.12em; margin: 0;">Phone</span>
+                        <a href="#" class="copy-link" data-copy="+919558336111" title="Click to copy phone number">+91 95583 36111</a>
+                        <a href="#" class="copy-link" data-copy="+919925222619" title="Click to copy phone number">+91 99252 22619</a>
+                    </div>
+                    <div style="display: grid; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--saffron); opacity: 0.8; letter-spacing: 0.12em; margin: 0;">Email</span>
+                        <a href="#" class="copy-link" data-copy="info@aquacare360.in" title="Click to copy general email">General: info@aquacare360.in</a>
+                        <a href="#" class="copy-link" data-copy="care@shubhamindia.com" title="Click to copy customer care email">Care: care@shubhamindia.com</a>
+                        <a href="#" class="copy-link" data-copy="careers@shubhamindia.com" title="Click to copy careers email">Careers: careers@shubhamindia.com</a>
+                    </div>
+                </div>
+                <div class="f-col">
                     <span>Industries We Serve</span>
                     <div class="f-sub-list">
                         <span>Residential Societies · Hotels & Resorts · Hospitals</span>
                         <span>Industries & Factories · Municipal Infrastructure</span>
                         <span>Commercial Office Buildings · Educational Institutions</span>
                     </div>
-                </div>
-                <div class="f-col">
-                    <span>Contact Details</span>
-                    <a href="#" class="copy-link" data-copy="care@aquacare360.in" title="Click to copy email address">care@aquacare360.in</a>
-                    <a href="#" class="copy-link" data-copy="sales@aquacare360.in" title="Click to copy email address">sales@aquacare360.in</a>
-                    <a href="#" class="copy-link" data-copy="service@aquacare360.in" title="Click to copy email address">service@aquacare360.in</a>
-                    <a href="#" class="copy-link" data-copy="+919558336111" title="Click to copy phone number">+91 955 8336 111</a>
                 </div>
                 <div class="f-col">
                     <span>Quick Index</span>

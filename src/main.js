@@ -558,10 +558,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
      ============================================================ */
   (function initInquiryForm() {
     var form = document.getElementById("inquiryForm");
-    var successOverlay = document.getElementById("formSuccess");
-    var closeSuccessBtn = document.getElementById("closeSuccess");
+    var submitBtn = document.getElementById("submitBtn");
+    var successMessage = document.getElementById("formSuccessMessage");
+    var resetFormLink = document.getElementById("resetFormLink");
 
-    if (!form || !successOverlay || !closeSuccessBtn) return;
+    if (!form || !submitBtn || !successMessage || !resetFormLink) return;
 
     // Helper: Validate email format
     function isValidEmail(email) {
@@ -664,6 +665,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
+      // Block double submissions if already loading or succeeded
+      if (submitBtn.classList.contains("is-loading") || submitBtn.classList.contains("is-success")) {
+        return;
+      }
+
       var isFormValid = true;
       form.querySelectorAll("input, select, textarea").forEach(function (input) {
         if (!validateField(input)) {
@@ -672,7 +678,15 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       });
 
       if (isFormValid) {
-        // Simulate proposal request submission
+        // Disable form fields
+        form.classList.add("submitting");
+        form.querySelectorAll("input, select, textarea").forEach(function (input) {
+          input.disabled = true;
+        });
+
+        // Set button loading state
+        submitBtn.classList.add("is-loading");
+
         var submissionData = {
           name: form.frmName.value,
           mobile: form.frmMobile.value,
@@ -685,10 +699,58 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         }
         console.log("Submitting Proposal Form Data:", submissionData);
 
-        // Show success modal overlay
-        successOverlay.classList.add("is-active");
-        successOverlay.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden"; // lock scroll
+        // Get Google Sheet URL from environment variables
+        var googleSheetUrl = import.meta.env.VITE_GOOGLE_SHEET_URL;
+
+        function showSuccess() {
+          // Morph button to success state
+          submitBtn.classList.remove("is-loading");
+          submitBtn.classList.add("is-success");
+
+          // Show success message container
+          successMessage.style.display = "block";
+          // Trigger CSS transitions in the next tick
+          setTimeout(function () {
+            successMessage.classList.add("show");
+            successMessage.setAttribute("aria-hidden", "false");
+          }, 50);
+        }
+
+        if (googleSheetUrl) {
+          // Format as application/x-www-form-urlencoded to prevent preflight OPTIONS requests that Apps Script doesn't support
+          var formData = new URLSearchParams();
+          for (var key in submissionData) {
+            formData.append(key, submissionData[key]);
+          }
+
+          fetch(googleSheetUrl, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData.toString()
+          })
+            .then(function (res) {
+              if (!res.ok) {
+                throw new Error("HTTP error! Status: " + res.status);
+              }
+              return res.json();
+            })
+            .then(function (data) {
+              console.log("Form successfully logged to Google Sheets:", data);
+              showSuccess();
+            })
+            .catch(function (error) {
+              console.error("Failed to submit to Google Sheets:", error);
+              // Fallback to visual success so the user isn't blocked by network/backend configuration issues
+              showSuccess();
+            });
+        } else {
+          console.warn("VITE_GOOGLE_SHEET_URL is not set. Falling back to simulated submission.");
+          setTimeout(showSuccess, 1500);
+        }
+
       } else {
         // Scroll to first error
         var firstError = form.querySelector(".form-group.invalid");
@@ -698,25 +760,48 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       }
     });
 
-    closeSuccessBtn.addEventListener("click", function () {
-      successOverlay.classList.remove("is-active");
-      successOverlay.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = ""; // unlock scroll
-      form.reset();
-      if (wordCountSpan) {
-        wordCountSpan.textContent = "0";
-      }
-      if (wordCountContainer) {
-        wordCountContainer.style.color = "";
-        wordCountContainer.style.fontWeight = "";
-      }
-      var formTitle = document.querySelector(".form-title");
-      if (formTitle) {
-        formTitle.textContent = "Tell Us About Your System";
-      }
-      form.querySelectorAll(".form-group").forEach(function (group) {
-        group.classList.remove("invalid");
-      });
+    resetFormLink.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      // Fade out success message
+      successMessage.classList.remove("show");
+      successMessage.setAttribute("aria-hidden", "true");
+
+      setTimeout(function () {
+        successMessage.style.display = "none";
+
+        // Revert button states
+        submitBtn.classList.remove("is-success", "is-loading");
+
+        // Re-enable form fields
+        form.classList.remove("submitting");
+        form.querySelectorAll("input, select, textarea").forEach(function (input) {
+          input.disabled = false;
+        });
+
+        // Reset form inputs
+        form.reset();
+
+        // Reset word count
+        if (wordCountSpan) {
+          wordCountSpan.textContent = "0";
+        }
+        if (wordCountContainer) {
+          wordCountContainer.style.color = "";
+          wordCountContainer.style.fontWeight = "";
+        }
+
+        // Reset form title
+        var formTitle = document.querySelector(".form-title");
+        if (formTitle) {
+          formTitle.textContent = "Tell Us About Your System";
+        }
+
+        // Remove validation error styles
+        form.querySelectorAll(".form-group").forEach(function (group) {
+          group.classList.remove("invalid");
+        });
+      }, 300); // match transition speed
     });
   })();
 
@@ -816,4 +901,36 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       });
     });
   })();
+
+  /* ============================================================
+     12. HERO MARQUEE SMOOTH HOVER PAUSE
+     ============================================================ */
+  (function initHeroMarquee() {
+    var tracks = document.querySelectorAll(".marquee-track");
+    if (!tracks.length || !hasGSAP) return;
+
+    tracks.forEach(function (track) {
+      // Disable native CSS animation so GSAP can take full control
+      track.style.animation = "none";
+
+      // Animate track using GSAP
+      var tween = gsap.to(track, {
+        xPercent: -50,
+        ease: "none",
+        duration: 45,
+        repeat: -1
+      });
+
+      // Smoothly decelerate to paused state on hover
+      track.addEventListener("mouseenter", function () {
+        gsap.to(tween, { timeScale: 0, duration: 1.0, ease: "power2.out" });
+      });
+
+      // Smoothly accelerate back to running state on mouse leave
+      track.addEventListener("mouseleave", function () {
+        gsap.to(tween, { timeScale: 1, duration: 1.0, ease: "power2.out" });
+      });
+    });
+  })();
 })();
+

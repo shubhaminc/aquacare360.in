@@ -1580,8 +1580,8 @@ footer {
 .f-grid {
   margin-top: clamp(46px, 9vh, 110px);
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: clamp(18px, 4vw, 70px);
+  grid-template-columns: 1.2fr 1.3fr 1.5fr 0.8fr;
+  gap: clamp(18px, 3vw, 48px);
   padding-top: 22px;
   align-items: start;
 }
@@ -2229,11 +2229,111 @@ footer {
   transition: all 0.35s cubic-bezier(0.65, 0.05, 0, 1);
   margin-top: 10px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  height: 46px;
+  /* Fix height to prevent resizing during state changes */
 }
 
 .submit-btn:hover {
   background: var(--porcelain);
   transform: translateY(-2px);
+}
+
+.submit-btn .btn-text {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.submit-btn .btn-loader,
+.submit-btn .btn-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinner Styles */
+.submit-btn .spinner-svg {
+  width: 20px;
+  height: 20px;
+  animation: rotate-spinner 0.8s linear infinite;
+}
+
+.submit-btn .spinner-path {
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 0;
+  animation: dash-spinner 1.5s ease-in-out infinite;
+}
+
+/* Checkmark Styles */
+.submit-btn .checkmark-svg {
+  width: 22px;
+  height: 22px;
+}
+
+.submit-btn .checkmark-path {
+  stroke: currentColor;
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  transition: stroke-dashoffset 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Loading State */
+.submit-btn.is-loading {
+  pointer-events: none;
+  background: var(--porcelain);
+  color: var(--ink-2);
+}
+
+.submit-btn.is-loading .btn-text {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.submit-btn.is-loading .btn-loader {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Success State */
+.submit-btn.is-success {
+  background: #05C793 !important;
+  color: var(--porcelain) !important;
+  pointer-events: none;
+}
+
+.submit-btn.is-success .btn-text {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.submit-btn.is-success .btn-loader {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.submit-btn.is-success .btn-check {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.submit-btn.is-success .checkmark-path {
+  stroke-dashoffset: 0;
+  transition-delay: 0.15s;
 }
 
 /* Form validation states */
@@ -2255,86 +2355,72 @@ footer {
   display: block;
 }
 
-/* Success overlay inside wrapper */
-.form-success-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(31, 5, 41, 0.95);
-  backdrop-filter: blur(15px);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-  opacity: 0;
+/* Submitting Form Fields State */
+.inquiry-form.submitting input,
+.inquiry-form.submitting select,
+.inquiry-form.submitting textarea,
+.inquiry-form.submitting button:not(#submitBtn) {
+  opacity: 0.6;
   pointer-events: none;
-  transition: opacity 0.4s ease;
-  z-index: 10;
 }
 
-.form-success-overlay.is-active {
+/* Inline Success Message */
+.form-success-message {
+  margin-top: 15px;
+  display: block;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.form-success-message.show {
   opacity: 1;
-  pointer-events: auto;
+  transform: translateY(0);
 }
 
-.success-box {
-  text-align: center;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.success-icon {
-  font-size: 48px;
-  animation: pulse-drop 2s infinite ease-in-out;
-}
-
-.success-box h3 {
-  font-family: var(--display);
-  font-size: 22px;
-  color: var(--porcelain);
-  font-weight: 700;
-}
-
-.success-box p {
+.form-success-message p {
   font-size: 14px;
-  color: var(--mist);
-  line-height: 1.5;
+  color: white transparent;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+  font-weight: 300;
 }
 
-.close-success-btn {
-  background: transparent;
+.reset-form-link {
   color: var(--saffron);
-  border: 1px solid var(--saffron);
-  border-radius: 999px;
-  padding: 8px 24px;
-  font-family: var(--mono);
-  font-size: 11px;
-  text-transform: uppercase;
+  text-decoration: underline;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
+  font-weight: 500;
+  display: inline-block;
+  margin-left: 8px;
+  transition: color 0.2s ease;
 }
 
-.close-success-btn:hover {
-  background: var(--saffron);
-  color: var(--ink-2);
+.reset-form-link:hover {
+  color: var(--porcelain);
 }
 
-@keyframes pulse-drop {
+@keyframes rotate-spinner {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash-spinner {
   0% {
-    transform: scale(1);
+    stroke-dashoffset: 60;
   }
 
   50% {
-    transform: scale(1.15);
-    filter: drop-shadow(0 0 10px rgba(216, 155, 255, 0.4));
+    stroke-dashoffset: 15;
+    transform: rotate(135deg);
   }
 
   100% {
-    transform: scale(1);
+    stroke-dashoffset: 60;
+    transform: rotate(450deg);
   }
 }
 
