@@ -2102,9 +2102,26 @@ footer {
   position: relative;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  /* border-radius: 16px; */
   padding: clamp(24px, 4vw, 48px);
   backdrop-filter: blur(10px);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for form wrapper */
+.contact-form-wrap::-webkit-scrollbar {
+  width: 6px;
+}
+.contact-form-wrap::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+.contact-form-wrap::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+.contact-form-wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--saffron);
 }
 
 .inquiry-form {
@@ -2152,7 +2169,7 @@ footer {
 .inquiry-form textarea {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
+  /* border-radius: 6px; */
   padding: 12px 14px;
   color: var(--porcelain);
   font-family: var(--body);
@@ -2177,6 +2194,16 @@ footer {
 
 .inquiry-form textarea {
   resize: vertical;
+  max-height: 300px;
+}
+
+.word-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--mist);
+  text-align: right;
+  margin-top: 4px;
+  transition: color 0.3s ease, font-weight 0.3s ease;
 }
 
 .inquiry-form input[type="file"] {

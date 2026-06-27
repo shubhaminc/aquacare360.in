@@ -597,6 +597,48 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       });
     });
 
+    // Message word count limiter
+    var messageInput = document.getElementById("frmMessage");
+    var wordCountSpan = document.getElementById("wordCount");
+    var wordCountContainer = document.getElementById("wordCountContainer");
+
+    function updateWordCount() {
+      if (!messageInput || !wordCountSpan) return;
+      var text = messageInput.value.trim();
+      var words = text ? text.split(/\s+/) : [];
+      var count = words.length;
+
+      if (count > 1000) {
+        // Truncate to first 1000 words
+        var truncated = words.slice(0, 1000).join(" ");
+        messageInput.value = truncated;
+        count = 1000;
+      }
+
+      wordCountSpan.textContent = count;
+
+      if (wordCountContainer) {
+        if (count >= 1000) {
+          wordCountContainer.style.color = "var(--saffron)";
+          wordCountContainer.style.fontWeight = "600";
+        } else {
+          wordCountContainer.style.color = "";
+          wordCountContainer.style.fontWeight = "";
+        }
+      }
+    }
+
+    if (messageInput) {
+      messageInput.addEventListener("input", updateWordCount);
+      messageInput.addEventListener("keyup", updateWordCount);
+      messageInput.addEventListener("change", updateWordCount);
+      messageInput.addEventListener("paste", function () {
+        setTimeout(updateWordCount, 10);
+      });
+      // Initial count update
+      updateWordCount();
+    }
+
     function validateField(input) {
       if (!input.hasAttribute("required") && input.value.trim() === "") {
         setFieldValidity(input, true);
@@ -661,6 +703,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       successOverlay.setAttribute("aria-hidden", "true");
       document.body.style.overflow = ""; // unlock scroll
       form.reset();
+      if (wordCountSpan) {
+        wordCountSpan.textContent = "0";
+      }
+      if (wordCountContainer) {
+        wordCountContainer.style.color = "";
+        wordCountContainer.style.fontWeight = "";
+      }
       var formTitle = document.querySelector(".form-title");
       if (formTitle) {
         formTitle.textContent = "Tell Us About Your System";

@@ -2,7 +2,7 @@
 
 ## Complete Care for Water, Wastewater & Pool Systems
 
-From routine maintenance and annual service contracts to emergency breakdown support and plant optimization, AquaCare360 keeps your systems running at peak performance.
+From routine maintenance and annual service contracts to emergency breakdown support and plant optimization, AquaCare360™ keeps your systems running at peak performance.
 
 **Operations • Maintenance • AMC • Emergency Support**
 
@@ -22,11 +22,11 @@ From routine maintenance and annual service contracts to emergency breakdown sup
 
 ---
 
-# Why AquaCare360
+# Why AquaCare360™
 
 ## Your Plant Was Built to Perform. We Make Sure It Continues To.
 
-Many treatment systems lose efficiency over time due to poor maintenance, inadequate monitoring, and delayed servicing. AquaCare360 provides structured operation and maintenance programs that maximize uptime, reduce operating costs, and extend equipment life.
+Many treatment systems lose efficiency over time due to poor maintenance, inadequate monitoring, and delayed servicing. AquaCare360™ provides structured operation and maintenance programs that maximize uptime, reduce operating costs, and extend equipment life.
 
 ### At a Glance
 
@@ -178,7 +178,7 @@ Continuous recommendations for long-term performance enhancement.
 
 ---
 
-# Why Choose AquaCare360
+# Why Choose AquaCare360™
 
 ## 360° Lifecycle Support
 
@@ -206,7 +206,7 @@ Supporting water reuse and resource conservation.
 
 ---
 
-# The AquaCare360 Promise
+# The AquaCare360™ Promise
 
 ### Smart. Reliable. Sustainable.
 
@@ -218,7 +218,7 @@ We don't just maintain systems. We maximize their value throughout their lifecyc
 
 # Keep Your Plant Running at Its Best
 
-Whether you need complete O&M services, an AMC program, emergency support, or system optimization, AquaCare360 is ready to help.
+Whether you need complete O&M services, an AMC program, emergency support, or system optimization, AquaCare360™ is ready to help.
 
 ## Get Started Today
 
