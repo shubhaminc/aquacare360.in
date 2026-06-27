@@ -1942,10 +1942,11 @@ footer {
 
 .contact-info h3 {
   font-family: var(--display);
-  font-size: clamp(24px, 3.2vw, 38px);
-  font-weight: 700;
-  color: var(--porcelain);
-  margin-bottom: 8px;
+  font-weight: 480;
+  font-size: clamp(28px, 3.6vw, 52px);
+  line-height: 1.06;
+  letter-spacing: -.018em;
+  margin-bottom: clamp(16px, 2.6vh, 26px);
 }
 
 .contact-subtitle {
@@ -2105,23 +2106,6 @@ footer {
   /* border-radius: 16px; */
   padding: clamp(24px, 4vw, 48px);
   backdrop-filter: blur(10px);
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-/* Custom scrollbar for form wrapper */
-.contact-form-wrap::-webkit-scrollbar {
-  width: 6px;
-}
-.contact-form-wrap::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.01);
-}
-.contact-form-wrap::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-}
-.contact-form-wrap::-webkit-scrollbar-thumb:hover {
-  background: var(--saffron);
 }
 
 .inquiry-form {
