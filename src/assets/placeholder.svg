@@ -1,0 +1,29 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#F0F1F4" />
+  <defs>
+    <linearGradient id="wave-grad-placeholder" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4E1E6B" stop-opacity="0.1" />
+      <stop offset="50%" stop-color="#6A2C91" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#D89BFF" stop-opacity="0.1" />
+    </linearGradient>
+    <style>
+      .title { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 700; font-size: 24px; fill: #2E083B; opacity: 0.65; letter-spacing: 0.05em; text-anchor: middle; }
+      .subtitle { font-family: 'Spline Sans Mono', monospace; font-size: 14px; fill: #6A2C91; opacity: 0.5; letter-spacing: 0.1em; text-anchor: middle; }
+      .path-glow { stroke: #6A2C91; stroke-width: 2; stroke-linecap: round; opacity: 0.25; }
+    </style>
+  </defs>
+  
+  <rect width="800" height="600" fill="url(#wave-grad-placeholder)" />
+  
+  <!-- Decorative Water Waves -->
+  <path d="M100 300 C 200 250, 300 350, 400 300 C 500 250, 600 350, 700 300" class="path-glow" fill="none" stroke-dasharray="10 5" />
+  <path d="M100 350 C 200 300, 300 400, 400 350 C 500 300, 600 400, 700 350" class="path-glow" fill="none" stroke-width="1" />
+  <circle cx="400" cy="220" r="40" stroke="#6A2C91" stroke-width="2" opacity="0.3" fill="none" stroke-dasharray="5 3" />
+  
+  <!-- Water Droplet Logo Icon in center -->
+  <path d="M400 195 C 415 210, 425 225, 425 235 C 425 248.8, 413.8 260, 400 260 C 386.2 260, 375 248.8, 375 235 C 375 225, 385 210, 400 195 Z" fill="#6A2C91" opacity="0.45" />
+
+  <text x="400" y="320" class="title">AQUACARE360</text>
+  <text x="400" y="350" class="subtitle">ASSET PLACEHOLDER IMAGE</text>
+  <text x="400" y="380" font-family="'Inter', sans-serif" font-size="12px" fill="#2E083B" opacity="0.4" text-anchor="middle">(Replace this file in your assets folder)</text>
+</svg>
