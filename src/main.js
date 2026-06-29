@@ -46,6 +46,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
      2. PRELOADER + HERO REVEAL
      ============================================================ */
   var loader = document.getElementById("loader");
+
+  function getActiveHeroLines() {
+    var desktopH1 = document.querySelector(".hero h1.desktop-only");
+    var mobileH1 = document.querySelector(".hero h1.mobile-only");
+    
+    if (desktopH1 && window.getComputedStyle(desktopH1).display !== 'none') {
+      return desktopH1.querySelectorAll(".mask .line");
+    } else if (mobileH1 && window.getComputedStyle(mobileH1).display !== 'none') {
+      return mobileH1.querySelectorAll(".mask .line");
+    }
+    return document.querySelectorAll(".hero h1.desktop-only .mask .line");
+  }
+
   function initHeroState() {
     if (!hasGSAP || reduced) return;
     gsap.set(".hero-inner", { scale: 0.96, opacity: 0 });
@@ -67,7 +80,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
     }
     var tl = gsap.timeline({ defaults: { ease: "power4.out" } });
     tl.to(".hero-inner", { scale: 1, opacity: 1, duration: 1.4, ease: "power3.out" }, 0)
-      .to(".hero .mask .line", { yPercent: 0, duration: 1.1, stagger: 0.08 }, 0.2)
+      .to(getActiveHeroLines(), { yPercent: 0, duration: 1.1, stagger: 0.08 }, 0.2)
       .to(".hero .rv", { y: 0, opacity: 1, duration: 0.8, stagger: 0.08 }, "-=0.6")
       .to("#hdr", { y: 0, opacity: 1, duration: 0.75 }, "-=0.7");
   }
@@ -933,5 +946,234 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
       });
     });
   })();
+
+  /* ============================================================
+     13. MOBILE INDUSTRIES SERVED CAROUSEL (GSAP Animated)
+     ============================================================ */
+  (function initMobileCarousel() {
+    var cards = document.querySelectorAll(".industries-grid .ind-card");
+    if (!cards.length || !hasGSAP) return;
+
+    var currentIndex = 0;
+    var lastIndex = 0;
+    var intervalId = null;
+    var isInitialized = false;
+
+    // Create dots container dynamically
+    var dotsContainer = document.createElement("div");
+    dotsContainer.className = "carousel-dots";
+
+    cards.forEach(function (card, idx) {
+      var dot = document.createElement("span");
+      dot.className = "carousel-dot";
+      dot.addEventListener("click", function () {
+        if (idx === currentIndex) return;
+        lastIndex = currentIndex;
+        currentIndex = idx;
+        updateCarousel();
+        startInterval(); // Reset interval on click
+      });
+      dotsContainer.appendChild(dot);
+    });
+
+    var grid = document.querySelector(".industries-grid");
+    if (grid) {
+      grid.parentNode.insertBefore(dotsContainer, grid.nextSibling);
+    }
+
+    function updateCarousel() {
+      var isMobile = window.innerWidth <= 480;
+      
+      if (isMobile) {
+        // Update dots active status
+        var dots = dotsContainer.querySelectorAll(".carousel-dot");
+        dots.forEach(function (dot, idx) {
+          dot.classList.toggle("is-active", idx === currentIndex);
+        });
+
+        if (!isInitialized) {
+          // First load: instantly position the active card and hide the rest
+          gsap.set(cards[currentIndex], { display: "flex", xPercent: 0, opacity: 1, zIndex: 2 });
+          cards.forEach(function (card, idx) {
+            if (idx !== currentIndex) {
+              gsap.set(card, { display: "none", xPercent: 100, opacity: 0, zIndex: 1 });
+            }
+          });
+          isInitialized = true;
+          return;
+        }
+
+        // Animate transition if index changed
+        if (lastIndex !== currentIndex) {
+          var outgoingCard = cards[lastIndex];
+          var incomingCard = cards[currentIndex];
+
+          // Determine direction: 1 for right-to-left, -1 for left-to-right
+          var direction = 1;
+          if (currentIndex === 0 && lastIndex === cards.length - 1) {
+            direction = 1;
+          } else if (currentIndex === cards.length - 1 && lastIndex === 0) {
+            direction = -1;
+          } else {
+            direction = currentIndex > lastIndex ? 1 : -1;
+          }
+
+          // Kill any running animations on these cards
+          gsap.killTweensOf([outgoingCard, incomingCard]);
+
+          // Set starting position for incoming card
+          gsap.set(incomingCard, { display: "flex", xPercent: direction * 100, opacity: 0, zIndex: 2 });
+          
+          // Animate incoming card in
+          gsap.to(incomingCard, {
+            xPercent: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out"
+          });
+
+          // Set zIndex and animate outgoing card out
+          gsap.set(outgoingCard, { zIndex: 1 });
+          gsap.to(outgoingCard, {
+            xPercent: -direction * 100,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            onComplete: function () {
+              // Hide outgoing card only if it's still not the current card
+              gsap.set(outgoingCard, { display: "none" });
+            }
+          });
+        }
+      } else {
+        // Clear GSAP inline styles on desktop/tablet
+        isInitialized = false;
+        gsap.killTweensOf(cards);
+        gsap.set(cards, { clearProps: "all" });
+      }
+    }
+
+    function startInterval() {
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(function () {
+        if (window.innerWidth <= 480) {
+          lastIndex = currentIndex;
+          currentIndex = (currentIndex + 1) % cards.length;
+          updateCarousel();
+        }
+      }, 4000); // 4 seconds interval for a premium, relaxed timing
+    }
+
+    updateCarousel();
+    startInterval();
+
+    window.addEventListener("resize", function () {
+      updateCarousel();
+    });
+  })();
+
+  /* ============================================================
+     14. MOBILE CLIENT LOGOS MARQUEE
+     ============================================================ */
+  (function initClientMarquee() {
+    var grid = document.querySelector(".clients-grid");
+    if (!grid) return;
+
+    var originalHTML = grid.innerHTML;
+    var isMobileMarqueeActive = false;
+    var marqueeTween = null;
+
+    function setupMobileMarquee() {
+      var isMobile = window.innerWidth <= 480;
+      
+      if (isMobile && !isMobileMarqueeActive) {
+        var items = grid.querySelectorAll(".client-logo-item");
+        if (!items.length) return;
+        
+        grid.innerHTML = "";
+        grid.classList.add("is-marquee");
+        
+        var track = document.createElement("div");
+        track.className = "clients-marquee-track";
+        
+        var content1 = document.createElement("div");
+        content1.className = "clients-marquee-content";
+        
+        var content2 = document.createElement("div");
+        content2.className = "clients-marquee-content";
+        content2.setAttribute("aria-hidden", "true");
+        
+        items.forEach(function (item) {
+          content1.appendChild(item.cloneNode(true));
+          content2.appendChild(item.cloneNode(true));
+        });
+        
+        track.appendChild(content1);
+        track.appendChild(content2);
+        grid.appendChild(track);
+        
+        if (hasGSAP) {
+          marqueeTween = gsap.to(track, {
+            xPercent: -50,
+            ease: "none",
+            duration: 25,
+            repeat: -1
+          });
+        }
+        
+        isMobileMarqueeActive = true;
+      } else if (!isMobile && isMobileMarqueeActive) {
+        if (marqueeTween) {
+          marqueeTween.kill();
+          marqueeTween = null;
+        }
+        grid.innerHTML = originalHTML;
+        grid.classList.remove("is-marquee");
+        isMobileMarqueeActive = false;
+      }
+    }
+
+    setupMobileMarquee();
+    window.addEventListener("resize", setupMobileMarquee);
+  })();
+
+  /* ============================================================
+     18. FOOTER ACCORDION FOR MOBILE
+     ============================================================ */
+  (function initFooterAccordion() {
+    var footerHeaders = document.querySelectorAll(".footer-nav-col h4");
+    if (!footerHeaders.length) return;
+
+    footerHeaders.forEach(function (header) {
+      header.addEventListener("click", function () {
+        if (window.innerWidth <= 992) {
+          var parent = header.parentElement;
+          var icon = header.querySelector(".accordion-icon");
+          var isActive = parent.classList.contains("active");
+
+          // Close all other accordions
+          document.querySelectorAll(".footer-nav-col").forEach(function (col) {
+            if (col !== parent) {
+              col.classList.remove("active");
+              var otherIcon = col.querySelector(".accordion-icon");
+              if (otherIcon) {
+                otherIcon.textContent = "add";
+              }
+            }
+          });
+
+          // Toggle current accordion
+          if (isActive) {
+            parent.classList.remove("active");
+            if (icon) icon.textContent = "add";
+          } else {
+            parent.classList.add("active");
+            if (icon) icon.textContent = "remove";
+          }
+        }
+      });
+    });
+  })();
 })();
+
 
